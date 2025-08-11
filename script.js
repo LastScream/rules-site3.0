@@ -1,10 +1,10 @@
-// McGround — Rules page scripts (стабильное оглавление + поиск по коду)
+
 
 (function () {
   const TRANSITION_MS = 500;
   const items = Array.from(document.querySelectorAll('.acc-item'));
 
-  // ---------------- helpers ----------------
+
   function setAria(item, expanded) {
     const btn = item.querySelector('.acc-summary');
     const panel = item.querySelector('.acc-panel');
@@ -78,7 +78,7 @@
     });
   }
 
-  // ---------------- Инициализация аккордеона ----------------
+
   items.forEach((item) => {
     const summary = item.querySelector('.acc-summary');
     const panel = item.querySelector('.acc-panel');
@@ -94,12 +94,12 @@
       if (!ev.altKey) items.forEach((it) => { if (it !== item) closeItem(it); });
       if (willOpen) { openItem(item); scrollToCategoryStartAfterSettled(item); }
       else { closeItem(item); }
-      // обновим активную ссылку в оглавлении
+
       selectTocByItem(item);
     });
   });
 
-  // Ресайз
+
   window.addEventListener('resize', () => {
     const open = items.find((it) => it.classList.contains('active'));
     if (!open) return;
@@ -109,25 +109,23 @@
     }
   });
 
-  // Открыть раздел из #hash
   if (location.hash) {
     const target = document.getElementById(location.hash.slice(1));
     if (target && target.classList.contains('acc-item')) {
       items.forEach((it) => { if (it !== target) closeItem(it); });
       openItem(target);
       setTimeout(() => scrollToCategoryStartAfterSettled(target), 60);
-      // актив в оглавлении
+
       setTimeout(() => selectTocByItem(target), 80);
     }
   }
 
-  // ---------------- Кнопки раскрыть/свернуть ----------------
   const btnExpandAll = document.getElementById('expandAll');
   const btnCollapseAll = document.getElementById('collapseAll');
   btnExpandAll && btnExpandAll.addEventListener('click', () => items.forEach(openItem));
   btnCollapseAll && btnCollapseAll.addEventListener('click', () => items.forEach(closeItem));
 
-  // ---------------- Тема ----------------
+
   const themeToggle = document.getElementById('themeToggle');
   const root = document.documentElement;
   function getTheme() { return localStorage.getItem('theme') || 'auto'; }
@@ -160,7 +158,7 @@
     });
   });
 
-  // ---------------- Оглавление (без автопрыжков при скролле) ----------------
+
   let selectTocByItem = () => {};
   (function toc() {
     const nav = document.querySelector('.toc-nav');
@@ -189,7 +187,7 @@
       nav.appendChild(a);
     });
 
-    // функция, которую будем вызывать из других мест
+  
     selectTocByItem = (it) => {
       if (!it || !it.id) return;
       const link = idToLink.get(it.id);
@@ -198,20 +196,20 @@
       link.classList.add('active');
     };
 
-    // первоначальный актив (если есть hash)
+
     if (location.hash) {
       const l = idToLink.get(location.hash.slice(1));
       if (l) { nav.querySelectorAll('a.active').forEach(x => x.classList.remove('active')); l.classList.add('active'); }
     }
   })();
 
-  // ---------------- Поиск по кодам: "3" / "3.4" ----------------
+
   (function codeSearch() {
     const input = document.getElementById('ruleSearch');
     const clearBtn = document.getElementById('clearSearch');
     if (!input) return;
 
-    // Пронумеруем каждый пункт как data-num="cat.item"
+
     items.forEach((catEl, i) => {
       const cat = i + 1;
       catEl.querySelectorAll('.points > li').forEach((li, j) => {
@@ -227,7 +225,7 @@
       items.forEach(it => { if (it !== catEl) closeItem(it); });
       if (!catEl.classList.contains('active')) openItem(catEl);
       setTimeout(() => { smoothCenterScroll(targetEl || catEl.querySelector('.acc-summary')); }, 40);
-      selectTocByItem(catEl); // фикс активного пункта в оглавлении
+      selectTocByItem(catEl);
     }
 
     function parseCode(raw) {
@@ -263,7 +261,7 @@
       openAndCenter(catEl, li || undefined);
     }
 
-    // ввод с задержкой
+
     let t;
     input.addEventListener('input', () => {
       clearTimeout(t);
@@ -281,7 +279,7 @@
       input.value = ''; clearHits(); input.focus();
     });
 
-    // Ctrl/⌘ + K
+ 
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault(); input.focus(); input.select();
@@ -289,7 +287,7 @@
     });
   })();
 
-  // ---------------- Навигационные хоткеи ----------------
+
   window.addEventListener('keydown', (e) => {
     const tag = (document.activeElement?.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
@@ -329,7 +327,7 @@
     }
   });
 
-  // ---------------- Индикатор прогресса чтения ----------------
+
   (function readingProgress(){
     const bar = document.querySelector('.reading-progress .bar');
     if (!bar) return;
@@ -363,3 +361,4 @@
     new ResizeObserver(set).observe(header);
   }
 })();
+
